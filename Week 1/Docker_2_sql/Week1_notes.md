@@ -46,7 +46,7 @@ During the course we will replicate the following architecture:
 
 A **data pipeline** is a service that receives data as input and outputs more data. For example, reading a CSV file, transforming the data somehow and storing it as a table in a PostgreSQL database.
 
-![data pipeline](images/01_01.png)
+https://github.com/avinashmatani/Analytics-Engineering-Bootcamp/blob/main/Week%201/Docker_2_sql/01_01.png
 
 _[Back to the top](#table-of-contents)_
 
