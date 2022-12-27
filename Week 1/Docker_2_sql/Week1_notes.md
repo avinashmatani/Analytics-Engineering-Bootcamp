@@ -36,7 +36,6 @@ During the course we will replicate the following architecture:
 
 ![architecture diagram](https://github.com/DataTalksClub/data-engineering-zoomcamp/raw/main/images/architecture/arch_1.jpg)
 
-* [New York's Taxi and Limousine Corporation's Trip Records Dataset](https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/dataset.md): the dataset we will use during the course.
 * [Spark](https://spark.apache.org/): analytics engine for large-scale data processing (distributed processing).
 * [Google BigQuery](https://cloud.google.com/products/bigquery/): serverless _data warehouse_ (central repository of integrated data from one or more disparate sources).
 * [Airflow](https://airflow.apache.org/): workflow management platform for data engineering pipelines. In other words, a pipeline orchestration tool.
@@ -54,8 +53,6 @@ _[Back to the top](#table-of-contents)_
 
 ## Docker basic concepts
 
-_([Video source](https://www.youtube.com/watch?v=EYNwNlOrpr0&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb&index=3))_
-
 **Docker** is a _containerization software_ that allows us to isolate software in a similar way to virtual machines but in a much leaner way.
 
 A **Docker image** is a _snapshot_ of a container that we can define to run our software, or in this case our data pipelines. By exporting our Docker images to Cloud providers such as Amazon Web Services or Google Cloud Platform we can run our containers there.
@@ -70,11 +67,61 @@ Docker provides the following advantages:
 
 Docker containers are ***stateless***: any changes done inside a container will **NOT** be saved when the container is killed and started again. This is an advantage because it allows us to restore any container to its initial state in a reproducible manner, but you will have to store data elsewhere if you need to do so; a common way to do so is with _volumes_.
 
->Note: you can learn more about Docker and how to set it up on a Mac [in this link](https://github.com/ziritrion/ml-zoomcamp/blob/11_kserve/notes/05b_virtenvs.md#docker). You may also be interested in a [Docker reference cheatsheet](https://gist.github.com/ziritrion/1842c8a4c4851602a8733bba19ab6050#docker).
+## Basic Docker Commands and Testing
+
+```bash
+docker run hellow-world # Rum Image
+
+docker run -it ubuntu bash ## interact with the container
+    ls
+    rm -rf
+    rm -rf / --no-preserve-root
+    ls
+    exit
+    ls # Check again
+
+docker run -it python:3.9 ## Run specific version of python
+
+    print("hellow world")
+    import pandas
+    pip install pandas
+
+# Now do this inside python prompt
+docker run -it --entrypoint=bash python:3.9
+    pip install pandas
+    python
+
+    python.__version__
+
+docker run -it --entrypoint=bash python:3.9
+    exit
+
+```
+### Do everything inside docker now
+Create a Dockerfile in your machine
+```dockerfile
+# base Docker image that we will build on
+FROM python:3.9
+
+# set up our image by installing prerequisites; pandas in this case
+RUN pip install pandas
+
+ENTRYPOINT ["bash"]
+```
+
+### Build your docker
+
+```
+docker build -t test:pandas .   # Build a image named test
+
+docker run -it test:pandas  # Note that we wont use entrypoint now
+       python 
+```
+
+
 
 ## Creating a custom pipeline with Docker
 
-_([Video source](https://www.youtube.com/watch?v=EYNwNlOrpr0&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb&index=3))_
 
 Let's create an example pipeline. We will create a dummy `pipeline.py` Python script that receives an argument and prints it.
 
@@ -136,9 +183,19 @@ You should get the same output you did when you ran the pipeline script by itsel
 
 >Note: these instructions asume that `pipeline.py` and `Dockerfile` are in the same directory. The Docker commands should also be run from the same directory as these files.
 
-## Running Postgres in a container
+### Testing this image
 
-_([Video source](https://www.youtube.com/watch?v=2JM-ziJt0WI&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb&index=4))_
+```
+docker run -it test:pandas
+     pwd
+     ls
+     python pipeline.py
+
+ 
+```
+
+
+## Running Postgres in a container
 
 In later parts of the course we will use Airflow, which uses PostgreSQL internally. For simpler tests we can use PostgreSQL (or just Postgres) directly.
 
